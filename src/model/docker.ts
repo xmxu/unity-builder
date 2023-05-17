@@ -48,6 +48,7 @@ class Docker {
     if (!existsSync(githubWorkflow)) mkdirSync(githubWorkflow);
     const commandPrefix = image === `alpine` ? `/bin/sh` : `/bin/bash`;
 
+    exec(`docker info`);
     exec(`ls -l ${actionFolder}/default-build-script`);
     exec(`ls -l ${actionFolder}/platforms/ubuntu/`);
 
