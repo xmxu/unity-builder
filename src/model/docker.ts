@@ -68,7 +68,7 @@ class Docker {
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
             ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${overrideCommands !== '' ? overrideCommands : `/entrypoint.sh`}"`;
+            "${overrideCommands !== '' ? overrideCommands : `ls -l /`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
