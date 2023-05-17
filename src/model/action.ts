@@ -26,7 +26,7 @@ class Action {
       return path.dirname(path.dirname(path.dirname(path.dirname(__filename))));
     }
 
-    return path.dirname(path.dirname(__filename));
+    return path.dirname(path.dirname(path.dirname(__filename)));
   }
 
   static get actionFolder(): string {
