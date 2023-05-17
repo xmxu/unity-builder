@@ -3,6 +3,7 @@ import { Action, BuildParameters, Cache, CloudRunner, Docker, ImageTag, Output }
 import { Cli } from './model/cli/cli';
 import MacBuilder from './model/mac-builder';
 import PlatformSetup from './model/platform-setup';
+import path from 'node:path';
 
 async function runMain() {
   try {
@@ -13,6 +14,9 @@ async function runMain() {
     }
     Action.checkCompatibility();
     Cache.verify();
+
+    core.debug(`__filename:${__filename}`);
+    core.debug(`__dirname:${path.dirname(__filename)}`);
 
     const { workspace, actionFolder } = Action;
 
