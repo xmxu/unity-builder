@@ -22,7 +22,7 @@ async function runMain() {
 
     await exec('ls /var/run');
     const { workspace, actionFolder } = Action;
-    await exec('ls', [actionFolder]);
+    await exec('ls', [`${actionFolder}/platforms/ubuntu/`]);
 
     const buildParameters = await BuildParameters.create();
     const baseImage = new ImageTag(buildParameters);
