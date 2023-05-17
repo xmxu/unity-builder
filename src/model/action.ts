@@ -23,7 +23,7 @@ class Action {
 
   static get rootFolder(): string {
     if (Action.isRunningFromSource) {
-      return path.dirname(path.dirname(path.dirname(__filename)));
+      return path.dirname(path.dirname(path.dirname(path.dirname(__filename))));
     }
 
     return path.dirname(path.dirname(__filename));
