@@ -68,7 +68,7 @@ class Docker {
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
             ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${overrideCommands !== '' ? overrideCommands : `ls -l /`}"`;
+            "${overrideCommands !== '' ? overrideCommands : `ls -l /UnityBuilderAction && ls -l /entrypoint.sh`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
