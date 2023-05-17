@@ -4,6 +4,7 @@ import { Cli } from './model/cli/cli';
 import MacBuilder from './model/mac-builder';
 import PlatformSetup from './model/platform-setup';
 import path from 'node:path';
+import { exec } from '@actions/exec';
 
 async function runMain() {
   try {
@@ -17,8 +18,11 @@ async function runMain() {
 
     core.debug(`__filename:${__filename}`);
     core.debug(`__dirname:${path.dirname(__filename)}`);
+    core.debug(`GITHUB_ACTION_PATH:${process.env.GITHUB_ACTION_PATH}`);
 
+    await exec('ls /var/run');
     const { workspace, actionFolder } = Action;
+    await exec('ls', [actionFolder]);
 
     const buildParameters = await BuildParameters.create();
     const baseImage = new ImageTag(buildParameters);
