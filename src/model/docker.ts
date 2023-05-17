@@ -2,7 +2,7 @@ import { execWithErrorCheck } from './exec-with-error-check';
 import ImageEnvironmentFactory from './image-environment-factory';
 import { existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { ExecOptions } from '@actions/exec';
+import { ExecOptions, exec } from '@actions/exec';
 import { DockerParameters, StringKeyValuePair } from './shared-types';
 
 class Docker {
@@ -48,6 +48,9 @@ class Docker {
     if (!existsSync(githubWorkflow)) mkdirSync(githubWorkflow);
     const commandPrefix = image === `alpine` ? `/bin/sh` : `/bin/bash`;
 
+    exec(`ls -l ${actionFolder}/default-build-script`);
+    exec(`ls -l ${actionFolder}/platforms/ubuntu/`);
+
     return `docker run \
             --workdir ${dockerWorkspacePath} \
             --rm \
@@ -60,15 +63,15 @@ class Docker {
             --volume "${githubWorkflow}":"/github/workflow:z" \
             --volume "${workspace}":"${dockerWorkspacePath}:z" \
             --volume "${actionFolder}/default-build-script:/UnityBuilderAction:z" \
-            --volume "${actionFolder}/platforms/ubuntu/steps:/steps" \
-            --volume "${actionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh" \
+            --volume "${actionFolder}/platforms/ubuntu/steps:/steps:z" \
+            --volume "${actionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh:z" \
             --volume "${actionFolder}/unity-config:/usr/share/unity3d/config/:z" \
             ${sshAgent ? `--volume ${sshAgent}:/ssh-agent` : ''} \
             ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
             ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${overrideCommands !== '' ? overrideCommands : `ls -l /UnityBuilderAction && ls -l /entrypoint.sh`}"`;
+            "${overrideCommands !== '' ? overrideCommands : `/entrypoint.sh`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
