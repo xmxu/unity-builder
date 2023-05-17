@@ -61,14 +61,14 @@ class Docker {
             --volume "${workspace}":"${dockerWorkspacePath}:z" \
             --volume "${actionFolder}/default-build-script:/UnityBuilderAction:z" \
             --volume "${actionFolder}/platforms/ubuntu/steps:/steps:z" \
-            --volume "${actionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh:z" \
+            --volume "${actionFolder}/platforms/ubuntu/entrypoint.sh:/abc/entrypoint.sh:z" \
             --volume "${actionFolder}/unity-config:/usr/share/unity3d/config/:z" \
             ${sshAgent ? `--volume ${sshAgent}:/ssh-agent` : ''} \
             ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
             ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${overrideCommands !== '' ? overrideCommands : `/entrypoint.sh`}"`;
+            "${overrideCommands !== '' ? overrideCommands : `/abc/entrypoint.sh`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
