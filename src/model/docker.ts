@@ -119,6 +119,7 @@ class Docker {
       const stats = statSync(sourcePath);
       if (stats.isDirectory()) {
         // 如果是子目录，递归调用拷贝目录函数
+        if (!existsSync(destinationPath)) mkdirSync(destinationPath, { recursive: true });
         Docker.copyDir(sourcePath, destinationPath);
       } else {
         // 如果是文件，直接拷贝文件
