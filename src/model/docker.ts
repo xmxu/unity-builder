@@ -1,6 +1,6 @@
 import { execWithErrorCheck } from './exec-with-error-check';
 import ImageEnvironmentFactory from './image-environment-factory';
-import { existsSync, mkdirSync, copyFileSync } from 'node:fs';
+import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { ExecOptions } from '@actions/exec';
 import { DockerParameters, StringKeyValuePair } from './shared-types';
@@ -98,11 +98,33 @@ class Docker {
   static copyPathWithReplacement(originalPath: string) {
     if (originalPath.includes('@')) {
       const replacedPath = originalPath.replace('@', '-'); // 替换 @ 字符
-      copyFileSync(originalPath, replacedPath);
+      if (!existsSync(replacedPath)) mkdirSync(replacedPath, { recursive: true });
+      Docker.copyDir(originalPath, replacedPath);
       originalPath = replacedPath;
     }
 
     return originalPath;
+  }
+
+  static copyDir(sourcePath_: string, destinationPath_: string) {
+    // 读取源目录内容
+    const files = readdirSync(sourcePath_);
+
+    // 逐个处理源目录下的文件和子目录
+    for (const file of files) {
+      const sourcePath = path.join(sourcePath_, file);
+      const destinationPath = path.join(destinationPath_, file);
+
+      // 判断文件类型
+      const stats = statSync(sourcePath_);
+      if (stats.isDirectory()) {
+        // 如果是子目录，递归调用拷贝目录函数
+        Docker.copyDir(sourcePath, destinationPath);
+      } else {
+        // 如果是文件，直接拷贝文件
+        copyFileSync(sourcePath, destinationPath);
+      }
+    }
   }
 }
 
