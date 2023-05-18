@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from 'node
 import path from 'node:path';
 import { ExecOptions, exec } from '@actions/exec';
 import { DockerParameters, StringKeyValuePair } from './shared-types';
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 class Docker {
   static async run(
