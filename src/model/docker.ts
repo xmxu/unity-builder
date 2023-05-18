@@ -1,8 +1,8 @@
 import { execWithErrorCheck } from './exec-with-error-check';
 import ImageEnvironmentFactory from './image-environment-factory';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
-import { ExecOptions, exec } from '@actions/exec';
+import { ExecOptions } from '@actions/exec';
 import { DockerParameters, StringKeyValuePair } from './shared-types';
 
 class Docker {
@@ -46,11 +46,9 @@ class Docker {
     if (!existsSync(githubHome)) mkdirSync(githubHome);
     const githubWorkflow = path.join(runnerTempPath, '_github_workflow');
     if (!existsSync(githubWorkflow)) mkdirSync(githubWorkflow);
-    const commandPrefix = image === `alpine` ? `/bin/sh` : `/bin/bash`;
+    const commandPrefix = image === `alpine` ? `/bin/sh` : `/bin/ bash`;
 
-    exec(`docker info`);
-    exec(`ls -l ${actionFolder}/default-build-script`);
-    exec(`ls -l ${actionFolder}/platforms/ubuntu/`);
+    const newActionFolder = this.copyPathWithReplacement(actionFolder);
 
     return `docker run \
             --workdir ${dockerWorkspacePath} \
@@ -63,10 +61,10 @@ class Docker {
             --volume "${githubHome}":"/root:z" \
             --volume "${githubWorkflow}":"/github/workflow:z" \
             --volume "${workspace}":"${dockerWorkspacePath}:z" \
-            --volume "${actionFolder}/default-build-script:/UnityBuilderAction:z" \
-            --volume "${actionFolder}/platforms/ubuntu/steps:/steps:z" \
-            --volume "${actionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh:z" \
-            --volume "${actionFolder}/unity-config:/usr/share/unity3d/config/:z" \
+            --volume "${newActionFolder}/default-build-script:/UnityBuilderAction:z" \
+            --volume "${newActionFolder}/platforms/ubuntu/steps:/steps:z" \
+            --volume "${newActionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh:z" \
+            --volume "${newActionFolder}/unity-config:/usr/share/unity3d/config/:z" \
             ${sshAgent ? `--volume ${sshAgent}:/ssh-agent` : ''} \
             ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
@@ -95,6 +93,16 @@ class Docker {
             --volume "${actionFolder}/BlankProject":"c:/BlankProject" \
             ${image} \
             powershell c:/steps/entrypoint.ps1`;
+  }
+
+  static copyPathWithReplacement(originalPath: string) {
+    if (originalPath.includes('@')) {
+      const replacedPath = originalPath.replace('@', '-'); // 替换 @ 字符
+      copyFileSync(originalPath, replacedPath);
+      originalPath = replacedPath;
+    }
+
+    return originalPath;
   }
 }
 

@@ -38,4 +38,5 @@ async function runMain() {
     core.setFailed((error as Error).message);
   }
 }
+
 runMain();
