@@ -2,8 +2,9 @@ import { execWithErrorCheck } from './exec-with-error-check';
 import ImageEnvironmentFactory from './image-environment-factory';
 import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { ExecOptions } from '@actions/exec';
+import { ExecOptions, exec } from '@actions/exec';
 import { DockerParameters, StringKeyValuePair } from './shared-types';
+import core from '@actions/core';
 
 class Docker {
   static async run(
@@ -49,6 +50,7 @@ class Docker {
     const commandPrefix = image === `alpine` ? `/bin/sh` : `/bin/bash`;
 
     const newActionFolder = this.copyPathWithReplacement(actionFolder);
+    exec(`ls -l ${newActionFolder}`);
 
     return `docker run \
             --workdir ${dockerWorkspacePath} \
@@ -124,6 +126,7 @@ class Docker {
       } else {
         // 如果是文件，直接拷贝文件
         copyFileSync(sourcePath, destinationPath);
+        core.debug(`copy ${sourcePath} to ${destinationPath}`);
       }
     }
   }
