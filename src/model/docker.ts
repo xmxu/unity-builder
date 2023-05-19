@@ -93,7 +93,7 @@ class Docker {
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
             ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${` ls -l /`}"`;
+            "${` ls -l /steps`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
