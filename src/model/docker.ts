@@ -92,7 +92,7 @@ class Docker {
             ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
-            "${`ls -l /entrypoint.sh`}"`;
+            "${`ls -l /`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
