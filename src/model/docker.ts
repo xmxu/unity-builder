@@ -52,6 +52,27 @@ class Docker {
     const newActionFolder = this.copyPathWithReplacement(actionFolder);
     exec(`ls -l ${newActionFolder}`);
 
+    // return `docker run \
+    //         --workdir ${dockerWorkspacePath} \
+    //         --rm \
+    //         ${ImageEnvironmentFactory.getEnvVarString(parameters, additionalVariables)} \
+    //         --env UNITY_SERIAL \
+    //         --env GITHUB_WORKSPACE=${dockerWorkspacePath} \
+    //         ${gitPrivateToken ? `--env GIT_PRIVATE_TOKEN="${gitPrivateToken}"` : ''} \
+    //         ${sshAgent ? '--env SSH_AUTH_SOCK=/ssh-agent' : ''} \
+    //         --volume "${githubHome}":"/root:z" \
+    //         --volume "${githubWorkflow}":"/github/workflow:z" \
+    //         --volume "${workspace}":"${dockerWorkspacePath}:z" \
+    //         --volume "${newActionFolder}/default-build-script:/UnityBuilderAction:z" \
+    //         --volume "${newActionFolder}/platforms/ubuntu/steps:/steps:z" \
+    //         --volume "${newActionFolder}/platforms/ubuntu/entrypoint.sh:/entrypoint.sh:z" \
+    //         --volume "${newActionFolder}/unity-config:/usr/share/unity3d/config/:z" \
+    //         ${sshAgent ? `--volume ${sshAgent}:/ssh-agent` : ''} \
+    //         ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
+    //         ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
+    //         ${image} \
+    //         ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
+    //         "${overrideCommands !== '' ? overrideCommands : `/entrypoint.sh`}"`;
     return `docker run \
             --workdir ${dockerWorkspacePath} \
             --rm \
@@ -71,8 +92,7 @@ class Docker {
             ${sshAgent ? '--volume /home/runner/.ssh/known_hosts:/root/.ssh/known_hosts:ro' : ''} \
             ${entrypointBash ? `--entrypoint ${commandPrefix}` : ``} \
             ${image} \
-            ${entrypointBash ? `-c` : `${commandPrefix} -c`} \
-            "${overrideCommands !== '' ? overrideCommands : `/entrypoint.sh`}"`;
+            "${`ls -l /entrypoint.sh`}"`;
   }
 
   static getWindowsCommand(image: string, parameters: DockerParameters): string {
